@@ -56,21 +56,30 @@ function renderInlineFormatting(text) {
   });
 }
 
-export function DepthContent({ section, activeDepth }) {
+export function DepthContent({ section, activeDepth, direction = 1, onSwipe }) {
   const depthKey = DEPTH_CONFIG[activeDepth].key;
   const content = section[depthKey];
   const isPicture = depthKey === "picture";
   const isSource = depthKey === "source";
 
+  const handleDragEnd = (_e, info) => {
+    if (info.offset.x < -50) onSwipe?.('left');
+    else if (info.offset.x > 50) onSwipe?.('right');
+  };
+
   return (
     <div role="tabpanel" aria-label={`${DEPTH_CONFIG[activeDepth].label} content`}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={depthKey}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0, x: direction * 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: direction * -40 }}
+          transition={{ duration: 0.25 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.3}
+          onDragEnd={handleDragEnd}
         >
           {isPicture ? (
             <img

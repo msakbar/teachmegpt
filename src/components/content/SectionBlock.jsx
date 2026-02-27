@@ -6,10 +6,22 @@ import { DEPTH_CONFIG } from "../../data/sections";
 
 export function SectionBlock({ section, sectionRef }) {
   const [activeDepth, setActiveDepth] = useState(0);
+  const [direction, setDirection] = useState(1);
   const titleId = `section-title-${section.id}`;
 
   const handleDepthChange = useCallback((depthIndex) => {
+    setDirection(depthIndex > activeDepth ? 1 : -1);
     setActiveDepth(depthIndex);
+  }, [activeDepth]);
+
+  const handleSwipe = useCallback((dir) => {
+    if (dir === 'left') {
+      setActiveDepth(d => Math.min(d + 1, DEPTH_CONFIG.length - 1));
+      setDirection(1);
+    } else {
+      setActiveDepth(d => Math.max(d - 1, 0));
+      setDirection(-1);
+    }
   }, []);
 
   return (
@@ -51,7 +63,7 @@ export function SectionBlock({ section, sectionRef }) {
             activeDepth={activeDepth}
             onDepthChange={handleDepthChange}
           />
-          <DepthContent section={section} activeDepth={activeDepth} />
+          <DepthContent section={section} activeDepth={activeDepth} direction={direction} onSwipe={handleSwipe} />
         </motion.div>
       </div>
     </section>
