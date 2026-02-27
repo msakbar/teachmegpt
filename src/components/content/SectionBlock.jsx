@@ -27,9 +27,9 @@ export function SectionBlock({ section, sectionRef }) {
       </h2>
 
       <div className="md:flex md:gap-12 md:items-start">
-        {/* Lemonade Stand analogy — left column on desktop, sticky alongside content */}
+        {/* Lemonade Stand analogy — left column on desktop, centered with content */}
         {section.analogy && (
-          <blockquote className="border-l-[3px] border-accent-fill pl-5 my-4 italic md:w-[380px] md:shrink-0 md:my-7 md:sticky md:top-[140px] md:py-3 md:pr-6">
+          <blockquote className="border-l-[3px] border-accent-fill pl-5 my-4 italic md:w-[380px] md:shrink-0 md:mt-[90px] md:mb-0 md:sticky md:top-[140px] md:py-3 md:pr-6">
             <p className="font-serif text-[15px] leading-[1.85] text-ink-secondary md:text-[14px] md:leading-[2]">
               <strong className="not-italic font-semibold text-ink block mb-2">
                 Sam&rsquo;s Lemonade Stand
