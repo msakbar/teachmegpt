@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export function Hero({ onStartReading }) {
   return (
     <div className="min-h-[calc(100dvh-60px)] md:min-h-[100dvh] flex flex-col items-center justify-center px-7 pb-16 relative">
-      <div className="w-full max-w-[640px] md:max-w-[1140px] md:flex md:items-center md:gap-6">
+      <div className="w-full max-w-[640px] md:max-w-[1040px] md:flex md:items-center md:gap-4">
         <div className="max-w-[640px] w-full md:flex-shrink-0">
         {/* Title */}
         <motion.h1
@@ -74,7 +74,7 @@ export function Hero({ onStartReading }) {
 
           {/* Sam — mobile only (bottom-right of CTA row) */}
           <motion.img
-            src="/originals/samtransparent.png"
+            src="/sam-waving.webp"
             alt="Sam waving"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -86,12 +86,12 @@ export function Hero({ onStartReading }) {
 
         {/* Sam — desktop only (right side, anchoring the text) */}
         <motion.img
-          src="/originals/samtransparent.png"
+          src="/sam-waving.webp"
           alt="Sam waving"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="hidden md:block w-[546px] flex-shrink-0"
+          className="hidden md:block w-[546px] flex-shrink-0 -ml-12"
         />
       </div>
 
