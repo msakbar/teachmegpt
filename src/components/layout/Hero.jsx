@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 
 export function Hero({ onStartReading }) {
   return (
-    <div className="min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center px-7 pb-16 relative">
-      <div className="max-w-[640px] w-full">
+    <div className="min-h-[calc(100dvh-60px)] md:min-h-[100dvh] flex flex-col items-center justify-center px-7 pb-16 relative">
+      <div className="w-full max-w-[640px] md:max-w-[1140px] md:flex md:items-center md:gap-6">
+        <div className="max-w-[640px] w-full md:flex-shrink-0">
         {/* Title */}
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -59,16 +60,39 @@ export function Hero({ onStartReading }) {
           has four levels of depth — start simple and go deeper if you want to.
         </motion.p>
 
-        {/* CTA */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.65 }}
-          onClick={onStartReading}
-          className="font-serif text-[16px] font-semibold text-accent-deep cursor-pointer bg-transparent border-none hover:underline underline-offset-2 transition-all"
-        >
-          Start reading ↓
-        </motion.button>
+        {/* CTA row — on mobile, Sam sits to the right of the button */}
+        <div className="flex items-end justify-between md:block">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.65 }}
+            onClick={onStartReading}
+            className="font-serif text-[16px] font-semibold text-accent-deep cursor-pointer bg-transparent border-none hover:underline underline-offset-2 transition-all"
+          >
+            Start reading ↓
+          </motion.button>
+
+          {/* Sam — mobile only (bottom-right of CTA row) */}
+          <motion.img
+            src="/originals/samtransparent.png"
+            alt="Sam waving"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.5 }}
+            className="md:hidden w-[208px] flex-shrink-0 -mb-4"
+          />
+        </div>
+        </div>
+
+        {/* Sam — desktop only (right side, anchoring the text) */}
+        <motion.img
+          src="/originals/samtransparent.png"
+          alt="Sam waving"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          className="hidden md:block w-[546px] flex-shrink-0"
+        />
       </div>
 
       {/* Footer credit */}

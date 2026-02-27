@@ -51,13 +51,7 @@ export default function App() {
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <TopBar
           activeIndex={activeIndex}
-          totalSections={SECTIONS.length}
-          onPrev={() => handleNav(Math.max(0, activeIndex - 1))}
-          onNext={() =>
-            handleNav(Math.min(SECTIONS.length - 1, Math.max(0, activeIndex) + 1))
-          }
           onMenuOpen={() => setDrawerOpen(true)}
-          isMobile={isMobile}
         />
 
         <Hero onStartReading={() => handleNav(0)} />

@@ -35,10 +35,10 @@ export function MobileDrawer({
             <div className="px-4 pt-5 pb-4 border-b border-[rgba(0,0,0,0.06)] flex justify-between items-start">
               <div>
                 <div className="font-serif text-[15px] font-semibold text-ink mb-0.5">
-                  microgpt.py
+                  TeachMeGPT
                 </div>
                 <div className="font-serif text-[12px] text-ink-secondary">
-                  by Karpathy
+                  How GPTs Actually Work
                 </div>
               </div>
               <button
