@@ -16,12 +16,12 @@ export function SectionBlock({ section, sectionRef }) {
     <section
       ref={sectionRef}
       aria-labelledby={titleId}
-      className="scroll-mt-[60px] md:scroll-mt-0"
+      className="scroll-mt-0"
     >
-      {/* Title — sticky below TopBar */}
+      {/* Title — sticky */}
       <h2
         id={titleId}
-        className="sticky top-[60px] md:top-0 z-10 bg-[#faf9f6] py-4 font-serif font-[200] text-[40px] leading-tight text-ink tracking-[-0.5px]"
+        className="sticky top-0 z-10 bg-[#faf9f6] py-4 font-serif font-[200] text-[40px] leading-tight text-ink tracking-[-0.5px]"
       >
         {section.title}
       </h2>

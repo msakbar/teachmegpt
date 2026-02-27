@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export function Hero({ onStartReading }) {
   return (
-    <div className="min-h-[calc(100dvh-60px)] md:min-h-[100dvh] flex flex-col items-center justify-center px-7 pb-16 relative">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-7 pb-16 relative">
       <div className="w-full max-w-[640px] md:max-w-[1040px] md:flex md:items-center md:gap-4">
         <div className="max-w-[640px] w-full md:flex-shrink-0">
         {/* Title */}
