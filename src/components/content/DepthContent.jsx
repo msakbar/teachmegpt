@@ -59,6 +59,7 @@ function renderInlineFormatting(text) {
 export function DepthContent({ section, activeDepth }) {
   const depthKey = DEPTH_CONFIG[activeDepth].key;
   const content = section[depthKey];
+  const isPicture = depthKey === "picture";
   const isSource = depthKey === "source";
 
   return (
@@ -71,7 +72,13 @@ export function DepthContent({ section, activeDepth }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {isSource ? (
+          {isPicture ? (
+            <img
+              src={section.image}
+              alt={section.title}
+              className="w-full max-w-[560px] rounded-lg"
+            />
+          ) : isSource ? (
             <CodeBlock code={content} />
           ) : (
             <div className="font-serif text-[16px] leading-[1.9] text-ink whitespace-pre-wrap [&_strong]:font-semibold [&_strong]:text-[15px]">

@@ -11,7 +11,7 @@ export function TopBar({
   const hasNext = activeIndex < totalSections - 1;
 
   return (
-    <div className="sticky top-0 z-50 bg-[#faf9f6]/92 backdrop-blur-[12px] border-b border-[rgba(0,0,0,0.06)] px-3 md:px-10 py-2 md:py-3 flex items-center gap-1.5">
+    <div className={`sticky top-0 z-50 bg-[#faf9f6]/92 backdrop-blur-[12px] border-b border-[rgba(0,0,0,0.06)] px-3 md:px-10 py-2 md:py-3 flex items-center gap-1.5 transition-opacity duration-300${inHero && !isMobile ? " opacity-0 pointer-events-none" : ""}`}>
       {isMobile ? (
         <button
           onClick={onMenuOpen}
