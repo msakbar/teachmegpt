@@ -26,35 +26,34 @@ export function SectionBlock({ section, sectionRef }) {
         {section.title}
       </h2>
 
-      {/* Lemonade Stand analogy — always visible above tabs */}
-      {section.analogy && (
-        <blockquote className="border-l-[3px] border-accent-fill pl-5 my-4 italic">
-          <p className="font-serif text-[15px] leading-[1.85] text-ink-secondary">
-            <strong className="not-italic font-semibold text-ink">
-              Sam&rsquo;s Lemonade Stand
-            </strong>
-            {" \u2014 "}
-            {section.analogy}
-          </p>
-        </blockquote>
-      )}
+      <div className="md:flex md:gap-12 md:items-start">
+        {/* Lemonade Stand analogy — left column on desktop, sticky alongside content */}
+        {section.analogy && (
+          <blockquote className="border-l-[3px] border-accent-fill pl-5 my-4 italic md:w-[380px] md:shrink-0 md:my-7 md:sticky md:top-[140px] md:py-3 md:pr-6">
+            <p className="font-serif text-[15px] leading-[1.85] text-ink-secondary md:text-[14px] md:leading-[2]">
+              <strong className="not-italic font-semibold text-ink block mb-2">
+                Sam&rsquo;s Lemonade Stand
+              </strong>
+              {section.analogy}
+            </p>
+          </blockquote>
+        )}
 
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="py-7"
-      >
-        {/* Depth Tabs */}
-        <DepthTabs
-          activeDepth={activeDepth}
-          onDepthChange={handleDepthChange}
-        />
-
-        {/* Depth Content */}
-        <DepthContent section={section} activeDepth={activeDepth} />
-      </motion.div>
+        {/* Tabs + content — right column on desktop */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="py-7 md:flex-1 md:min-w-0"
+        >
+          <DepthTabs
+            activeDepth={activeDepth}
+            onDepthChange={handleDepthChange}
+          />
+          <DepthContent section={section} activeDepth={activeDepth} />
+        </motion.div>
+      </div>
     </section>
   );
 }

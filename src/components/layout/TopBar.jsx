@@ -6,6 +6,7 @@ export function TopBar({
   onMenuOpen,
   isMobile,
 }) {
+  const inHero = activeIndex === -1;
   const hasPrev = activeIndex > 0;
   const hasNext = activeIndex < totalSections - 1;
 
@@ -21,31 +22,35 @@ export function TopBar({
         </button>
       ) : null}
 
-      <button
-        onClick={onPrev}
-        disabled={!hasPrev}
-        aria-label="Previous section"
-        className={`bg-[rgba(0,0,0,0.03)] border-none rounded-lg cursor-pointer font-serif text-sm min-w-[44px] min-h-[44px] flex items-center justify-center ${
-          hasPrev ? "text-ink-secondary" : "text-ink-tertiary/40 cursor-default"
-        }`}
-      >
-        &#8249;
-      </button>
+      {!inHero ? (
+        <>
+          <button
+            onClick={onPrev}
+            disabled={!hasPrev}
+            aria-label="Previous section"
+            className={`bg-[rgba(0,0,0,0.03)] border-none rounded-lg cursor-pointer font-serif text-sm min-w-[44px] min-h-[44px] flex items-center justify-center ${
+              hasPrev ? "text-ink-secondary" : "text-ink-tertiary/40 cursor-default"
+            }`}
+          >
+            &#8249;
+          </button>
 
-      <span className="font-serif text-[13px] text-ink-tertiary min-w-[40px] text-center">
-        {activeIndex + 1} / {totalSections}
-      </span>
+          <span className="font-serif text-[13px] text-ink-tertiary min-w-[40px] text-center">
+            {activeIndex + 1} / {totalSections}
+          </span>
 
-      <button
-        onClick={onNext}
-        disabled={!hasNext}
-        aria-label="Next section"
-        className={`bg-[rgba(0,0,0,0.03)] border-none rounded-lg cursor-pointer font-serif text-sm min-w-[44px] min-h-[44px] flex items-center justify-center ${
-          hasNext ? "text-ink-secondary" : "text-ink-tertiary/40 cursor-default"
-        }`}
-      >
-        &#8250;
-      </button>
+          <button
+            onClick={onNext}
+            disabled={!hasNext}
+            aria-label="Next section"
+            className={`bg-[rgba(0,0,0,0.03)] border-none rounded-lg cursor-pointer font-serif text-sm min-w-[44px] min-h-[44px] flex items-center justify-center ${
+              hasNext ? "text-ink-secondary" : "text-ink-tertiary/40 cursor-default"
+            }`}
+          >
+            &#8250;
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }

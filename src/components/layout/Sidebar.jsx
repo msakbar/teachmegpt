@@ -11,10 +11,10 @@ export function Sidebar({ sections, activeIndex, onNavigate }) {
   return (
     <nav
       aria-label="Sections"
-      className="hidden md:flex flex-col w-[260px] min-w-[260px] h-screen sticky top-0 bg-page border-r border-[rgba(0,0,0,0.06)] overflow-y-auto"
+      className="hidden md:flex flex-col w-[220px] min-w-[220px] h-screen sticky top-0 bg-page border-r border-[rgba(0,0,0,0.06)] overflow-y-auto"
     >
       {/* Header */}
-      <div className="px-5 pt-7 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+      <div className="px-5 h-[69px] flex flex-col justify-center border-b border-[rgba(0,0,0,0.06)]">
         <div className="font-serif text-[15px] font-semibold text-ink mb-0.5">
           microgpt.py
         </div>

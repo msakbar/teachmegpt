@@ -6,6 +6,7 @@ import { Sidebar } from "./components/layout/Sidebar";
 import { TopBar } from "./components/layout/TopBar";
 import { MobileDrawer } from "./components/layout/MobileDrawer";
 import { SectionContainer } from "./components/layout/SectionContainer";
+import { Hero } from "./components/layout/Hero";
 
 export default function App() {
   const isMobile = useIsMobile();
@@ -53,12 +54,13 @@ export default function App() {
           totalSections={SECTIONS.length}
           onPrev={() => handleNav(Math.max(0, activeIndex - 1))}
           onNext={() =>
-            handleNav(Math.min(SECTIONS.length - 1, activeIndex + 1))
+            handleNav(Math.min(SECTIONS.length - 1, Math.max(0, activeIndex) + 1))
           }
           onMenuOpen={() => setDrawerOpen(true)}
           isMobile={isMobile}
         />
 
+        <Hero onStartReading={() => handleNav(0)} />
         <SectionContainer setSectionRef={setSectionRef} />
       </div>
     </div>
