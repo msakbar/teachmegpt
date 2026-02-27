@@ -76,7 +76,11 @@ export function DepthContent({ section, activeDepth }) {
             <img
               src={section.image}
               alt={section.title}
-              className="w-full max-w-[560px] rounded-lg"
+              width={1120}
+              height={747}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-[560px] h-auto rounded-lg"
             />
           ) : isSource ? (
             <CodeBlock code={content} />
