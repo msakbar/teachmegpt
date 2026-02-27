@@ -16,10 +16,10 @@ export function Sidebar({ sections, activeIndex, onNavigate }) {
       {/* Header */}
       <div className="px-5 h-[69px] flex flex-col justify-center border-b border-[rgba(0,0,0,0.06)]">
         <div className="font-serif text-[15px] font-semibold text-ink mb-0.5">
-          microgpt.py
+          TeachMeGPT
         </div>
         <div className="font-serif text-[13px] text-ink-secondary">
-          Karpathy&rsquo;s 140-line GPT
+          How GPTs Actually Work
         </div>
       </div>
 
