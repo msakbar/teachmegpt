@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { SECTIONS } from "./data/sections";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { useActiveSection } from "./hooks/useActiveSection";
@@ -10,9 +10,11 @@ import { SectionContainer } from "./components/layout/SectionContainer";
 export default function App() {
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const scrollContainerRef = useRef(null);
 
   const { activeIndex, scrollToSection, setSectionRef } = useActiveSection(
-    SECTIONS.length
+    SECTIONS.length,
+    scrollContainerRef
   );
 
   const handleNav = useCallback(
@@ -23,7 +25,7 @@ export default function App() {
   );
 
   return (
-    <div className="flex min-h-screen bg-page">
+    <div className="flex h-screen bg-page">
       {/* Desktop Sidebar */}
       {!isMobile ? (
         <Sidebar
@@ -45,7 +47,7 @@ export default function App() {
       ) : null}
 
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <TopBar
           activeIndex={activeIndex}
           totalSections={SECTIONS.length}

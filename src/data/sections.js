@@ -9,9 +9,8 @@ export const SECTIONS = [
   {
     id: "whats-a-gpt",
     title: "What Is a GPT?",
+    analogy: `Sam runs a lemonade stand. Every day, she watches the line of customers and tries to guess what the NEXT person will order based on what the people before them ordered. \u201cThe last 3 people ordered lemon, lemon, strawberry\u2026 so the next one is probably lemon.\u201d That\u2019s a GPT. It looks at a sequence of things and predicts what comes next.`,
     simple: `**A GPT predicts the next token. That single operation, repeated, produces language.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam runs a lemonade stand. Every day, she watches the line of customers and tries to guess what the NEXT person will order based on what the people before them ordered. "The last 3 people ordered lemon, lemon, strawberry... so the next one is probably lemon." That\u2019s a GPT. It looks at a sequence of things and predicts what comes next.
 
 A GPT is a guessing game. You show it some letters, and it guesses the next letter. Show it "Emm" and it guesses "a". That\u2019s the whole trick. Do this really fast, one letter at a time, and you get words. Do it with enough practice, and the guesses get really good.
 
@@ -51,9 +50,8 @@ args = parser.parse_args()`,
   {
     id: "tokenizer",
     title: "The Tokenizer",
+    analogy: `Sam can\u2019t do math with drink names like \u201clemonade\u201d and \u201cstrawberry.\u201d So she assigns each drink a number: lemonade=2, strawberry=3, water=4. She also has two special codes: \u201cNEW CUSTOMER APPROACHING\u201d (=0) and \u201cCUSTOMER DONE ORDERING\u201d (=1). Now she can work with numbers instead of words.`,
     simple: `**Tokens are the atoms of language models \u2014 everything the model sees or produces is a token.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam can\u2019t do math with drink names like "lemonade" and "strawberry." So she assigns each drink a number: lemonade=2, strawberry=3, water=4. She also has two special codes: "NEW CUSTOMER APPROACHING" (=0) and "CUSTOMER DONE ORDERING" (=1). Now she can work with numbers instead of words.
 
 Computers can\u2019t read letters. They only understand numbers. So before we start, we make a cheat sheet:
 - "a" = number 3
@@ -102,9 +100,8 @@ BOS, EOS = stoi['<BOS>'], stoi['<EOS>']`,
   {
     id: "autograd",
     title: "The Autograd Engine",
+    analogy: `Sam guesses wrong \u2014 she predicted lemonade but the customer ordered strawberry. She wants to get better, so she traces back through her reasoning: \u201cI looked at the weather, the time of day, and how long the line was\u2026 which of those things should I pay more attention to next time?\u201d She figures out exactly how much each factor contributed to her mistake, so she knows precisely what to tweak in her notebook.`,
     simple: `**Autograd traces every calculation forward, then walks backward to assign blame \u2014 which numbers caused the error.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam guesses wrong \u2014 she predicted lemonade but the customer ordered strawberry. She wants to get better, so she traces back through her reasoning: "I looked at the weather, the time of day, and how long the line was... which of those things should I pay more attention to next time?" She figures out exactly how much each factor contributed to her mistake, so she knows precisely what to tweak in her notebook.
 
 Imagine you build a tower of blocks, and the top block falls. You want to know which block lower down caused the problem. So you trace backwards from the top: "this block wobbled because THAT block was crooked, and THAT block was crooked because THIS one was too far left."
 
@@ -173,9 +170,8 @@ The critical insight: this tiny class replaces PyTorch\u2019s entire autograd sy
   {
     id: "parameters",
     title: "Model Parameters",
+    analogy: `Sam keeps a notebook full of numbers that represent her \u201cbeliefs.\u201d One page says how much weight to give hot weather (0.7), another says how much weight to give the time of day (0.3). At first, these numbers are random guesses. Over weeks of practice, she adjusts them until her predictions get good. The notebook IS her expertise \u2014 without it, she\u2019s back to random guessing.`,
     simple: `**Parameters are just numbers \u2014 thousands of them \u2014 that start random and get tuned by training.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam keeps a notebook full of numbers that represent her "beliefs." One page says how much weight to give hot weather (0.7), another says how much weight to give the time of day (0.3). At first, these numbers are random guesses. Over weeks of practice, she adjusts them until her predictions get good. The notebook IS her expertise \u2014 without it, she\u2019s back to random guessing.
 
 The model starts with thousands of random numbers. These are its "guesses about how language works." At first they\u2019re nonsense. Training slowly adjusts each number so the model gets better at predicting the next letter.
 
@@ -223,9 +219,8 @@ params = [p for mat in state_dict.values()
   {
     id: "helpers",
     title: "Building Blocks",
+    analogy: `Sam uses three tools every day. Her RECIPE CARD mixes different inputs using her own personal weightings. Her PERCENTAGE CONVERTER turns raw gut-feel scores into actual chances \u2014 lemonade 82%, strawberry 14%, water 4%. Her VOLUME KNOB rescales everything back to a reasonable range so tomorrow\u2019s math doesn\u2019t go haywire.`,
     simple: `**Three functions \u2014 linear, softmax, rmsnorm \u2014 are the entire toolkit. Everything else is combinations of these.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam uses three tools every day. Her RECIPE CARD mixes different inputs using her own personal weightings. Her PERCENTAGE CONVERTER turns raw gut-feel scores into actual chances \u2014 lemonade 82%, strawberry 14%, water 4%. Her VOLUME KNOB rescales everything back to a reasonable range so tomorrow\u2019s math doesn\u2019t go haywire.
 
 Three helper tools the model uses constantly:
 
@@ -262,9 +257,8 @@ def rmsnorm(x):
   {
     id: "attention",
     title: "Self-Attention",
+    analogy: `Sam is watching customer #5 approach. To predict their order, she looks back at the previous 4 customers and asks: \u201cHow relevant is each person to what #5 might order?\u201d The mom with two kids is very relevant \u2014 families order similarly. The jogger grabbing water \u2014 barely relevant. She blends past information weighted by relevance. The clever part: she does this four different ways at once, each focusing on different patterns, then combines all four into one final read.`,
     simple: `**Attention lets each token ask: \u201cwhat earlier tokens are relevant to me?\u201d \u2014 and blend their information accordingly.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam is watching customer #5 approach. To predict their order, she looks back at the previous 4 customers and asks: "How relevant is each person to what #5 might order?" The mom with two kids is very relevant \u2014 families order similarly. The jogger grabbing water \u2014 barely relevant. She blends past information weighted by relevance. The clever part: she does this four different ways at once, each focusing on different patterns, then combines all four into one final read.
 
 Imagine you\u2019re reading a story and you get to a blank: "The cat sat on the ___." To fill in the blank, you look back at the earlier words. "Cat" is important \u2014 cats sit on things. "The" isn\u2019t very important. "Sat" tells you it\u2019s a place. Your brain automatically focuses on the useful words and ignores the rest.
 
@@ -321,9 +315,8 @@ x = [a + b for a, b in zip(x, x_residual)]`,
   {
     id: "mlp",
     title: "The MLP Block",
+    analogy: `After Sam scans the line and gathers relevant info from past customers, she goes to her back office to actually THINK. She spreads all her notes out on a big desk, crosses out anything that doesn\u2019t seem useful, then writes her conclusions on a small index card. One key habit: she always combines her new conclusions with what she already knew. She never throws away her original read of the situation \u2014 she only adds new insights on top.`,
     simple: `**Attention gathers information from other positions; the MLP processes it. Together they form one transformer layer.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 After Sam scans the line and gathers relevant info from past customers, she goes to her back office to actually THINK. She spreads all her notes out on a big desk, crosses out anything that doesn\u2019t seem useful, then writes her conclusions on a small index card. One key habit: she always combines her new conclusions with what she already knew. She never throws away her original read of the situation \u2014 she only adds new insights on top.
 
 After looking at the other letters (attention), the model needs to actually THINK about what it saw. It does this in three steps:
 1. Spread out the information into a bigger space (more room to think)
@@ -358,9 +351,8 @@ x = [a + b for a, b in zip(x, x_residual)]`,
   {
     id: "forward-pass",
     title: "The Full Forward Pass",
+    analogy: `Here\u2019s a complete cycle for Sam. A customer approaches. She checks her reference card for this type of customer and notes what position in line they are. She combines those two pieces of info, then does her two-step process: (1) scan the line and gather relevant info from past customers, (2) go to the back office and think about what she gathered. She comes back and announces: \u201c72% lemonade, 18% strawberry, 10% water.\u201d One token in, one prediction out.`,
     simple: `**Embed \u2192 attend \u2192 MLP \u2192 predict. That\u2019s the entire forward pass. One token in, probabilities for every possible next token out.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Here\u2019s a complete cycle for Sam. A customer approaches. She checks her reference card for this type of customer and notes what position in line they are. She combines those two pieces of info, then does her two-step process: (1) scan the line and gather relevant info from past customers, (2) go to the back office and think about what she gathered. She comes back and announces: "72% lemonade, 18% strawberry, 10% water." One token in, one prediction out.
 
 Here\u2019s everything that happens when the model sees one letter:
 
@@ -410,9 +402,8 @@ The function is purely functional with side effects only on the mutable KV cache
   {
     id: "training",
     title: "The Training Loop",
+    analogy: `Every day, Sam watches one real customer and compares her prediction to what actually happened. She checks how wrong she was \u2014 if she was really confident in the WRONG answer, she needs to change a lot. She traces back through her reasoning to figure out which numbers in her notebook to adjust. She tweaks every number just a little in the direction that would have made her less wrong. She does this every day for 1,000 days. By the end, she\u2019s very good.`,
     simple: `**Training is just: predict, measure error, trace blame, nudge parameters. Repeat 1,000 times.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Every day, Sam watches one real customer and compares her prediction to what actually happened. She checks how wrong she was \u2014 if she was really confident in the WRONG answer, she needs to change a lot. She traces back through her reasoning to figure out which numbers in her notebook to adjust. She tweaks every number just a little in the direction that would have made her less wrong. She does this every day for 1,000 days. By the end, she\u2019s very good.
 
 Training is like practice:
 
@@ -479,9 +470,8 @@ for step in range(args.num_steps):
   {
     id: "inference",
     title: "Generation",
+    analogy: `After 1,000 days of practice, Sam puts her trained notebook to use \u2014 not to predict real customers, but to INVENT a plausible order from scratch. She starts by imagining a customer just walked up, checks her notebook, and rolls a weighted die \u2014 lemonade. She pretends that already happened and predicts the next item \u2014 strawberry. She keeps going until her notebook predicts \u201cthe order is done.\u201d The sequence she produced is a brand-new order that nobody ever actually placed, invented from learned patterns.`,
     simple: `**Generation is just the forward pass in a loop \u2014 predict next token, sample it, feed it back in. That\u2019s how every LLM writes.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 After 1,000 days of practice, Sam puts her trained notebook to use \u2014 not to predict real customers, but to INVENT a plausible order from scratch. She starts by imagining a customer just walked up, checks her notebook, and rolls a weighted die \u2014 lemonade. She pretends that already happened and predicts the next item \u2014 strawberry. She keeps going until her notebook predicts "the order is done." The sequence she produced is a brand-new order that nobody ever actually placed, invented from learned patterns.
 
 Now the model makes up its own names:
 
@@ -528,9 +518,8 @@ for sample_idx in range(5):
   {
     id: "scale",
     title: "From Micro to Macro",
+    analogy: `Sam\u2019s lemonade stand has 3 drinks, serves 10 customers/day, and uses a pocket notebook. McDonald\u2019s has 100+ menu items, serves 70 million customers/day, and uses a global supply chain with AI forecasting. But the LOGIC is the same: observe patterns, predict demand, adjust based on mistakes. A bigger notebook, more data to learn from, and more practice time \u2014 that\u2019s what separates a stand from an empire. The recipe never changed.`,
     simple: `**The algorithm in this 140-line file is the same one running inside GPT-4. The difference is only scale.**
-
-> **Sam\u2019s Lemonade Stand** \u2014 Sam\u2019s lemonade stand has 3 drinks, serves 10 customers/day, and uses a pocket notebook. McDonald\u2019s has 100+ menu items, serves 70 million customers/day, and uses a global supply chain with AI forecasting. But the LOGIC is the same: observe patterns, predict demand, adjust based on mistakes. A bigger notebook, more data to learn from, and more practice time \u2014 that\u2019s what separates a stand from an empire. The recipe never changed.
 
 This tiny model learns names with 5,000 numbers. GPT-4 uses 1,800,000,000,000 numbers (1.8 trillion). But the steps are IDENTICAL:
 - Turn text into numbers

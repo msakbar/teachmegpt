@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-export function useActiveSection(sectionCount) {
+export function useActiveSection(sectionCount, scrollContainerRef) {
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRefs = useRef([]);
   const isScrollingRef = useRef(false);
@@ -10,6 +10,7 @@ export function useActiveSection(sectionCount) {
     sectionRefs.current = sectionRefs.current.slice(0, sectionCount);
   }, [sectionCount]);
 
+  // Track active section via IntersectionObserver
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
