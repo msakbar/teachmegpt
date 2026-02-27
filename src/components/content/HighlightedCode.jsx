@@ -14,7 +14,7 @@ export default function HighlightedCode({ code }) {
     <Highlight theme={theme} code={code.trim()} language="python">
       {({ style, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className="rounded-2xl p-5 overflow-x-auto text-[13px] leading-[1.7] font-mono"
+          className="rounded-2xl p-5 text-[13px] leading-[1.7] font-mono whitespace-pre-wrap break-words"
           style={{ ...style, backgroundColor: "var(--color-well)" }}
         >
           {tokens.map((line, i) => (
