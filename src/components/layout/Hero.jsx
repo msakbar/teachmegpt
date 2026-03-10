@@ -56,8 +56,17 @@ export function Hero({ onStartReading }) {
           className="font-serif text-[17px] md:text-[18px] leading-[1.9] text-ink-secondary mb-10 md:mb-14"
         >
           I built this to help you understand it too, with the use of a lemonade
-          stand analogy and some generated images to accompany them. Each section
-          has four levels of depth — start simple and go deeper if you want to.
+          stand analogy and some generated images to accompany them. My brother{" "}
+          <a
+            href="https://www.linkedin.com/in/adakbar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink underline decoration-ink-tertiary underline-offset-2 hover:decoration-ink transition-colors"
+          >
+            Adnan
+          </a>{" "}
+          helped review and verify the details. Each section has four levels of
+          depth — start simple and go deeper if you want to.
         </motion.p>
 
         {/* CTA row — on mobile, Sam sits to the right of the button */}

@@ -19,7 +19,7 @@ A GPT is a guessing game. You show it some letters, and it guesses the next lett
 This file teaches a tiny GPT to guess letters in names. You show it the start of a name, and it guesses what letter comes next until it decides the name is done.`,
     technical: `A GPT is a next-token predictor. A "token" here is a single character (a, b, c...). The model takes a sequence of characters it\u2019s already seen and outputs a probability for every possible next character.
 
-This file is a complete GPT in ~140 lines of Python. It downloads a list of real names (Emma, Olivia, Liam...), trains a tiny neural network to predict the next character in each name, and then generates brand-new names that sound plausible.
+This file is a complete GPT in ~243 lines of Python. It downloads a list of real names (Emma, Olivia, Liam...), trains a tiny neural network to predict the next character in each name, and then generates brand-new names that sound plausible.
 
 The file has zero dependencies \u2014 no PyTorch, no TensorFlow. Every operation is written out by hand so you can see exactly what happens.`,
     deep: `This is Karpathy\u2019s "microgpt" \u2014 a pedagogical artifact that implements the full GPT algorithm (training + inference) in pure Python with only standard library imports. Minor architectural differences from GPT-2: RMSNorm instead of LayerNorm, no biases, squared ReLU instead of GELU.
@@ -196,13 +196,14 @@ Per transformer layer, 6 more matrices:
 All start as small random numbers (mean=0, std=0.02). Training adjusts every single one.`,
     deep: `Weight initialization follows standard practice: Gaussian(0, 0.02) for most matrices, with output projections (attn_wo, mlp_fc2) initialized at zero. This is a deliberate choice \u2014 it means each layer initially acts as an identity (due to residual connections), which stabilizes early training.
 
-Weight tying: wte serves double duty as both the input embedding table and the output projection. This halves the embedding parameters and creates a geometric constraint: the model\u2019s "understanding" of a token (input embedding) must be consistent with its "prediction" of that token (output logits).
+lm_head is a separate output projection matrix (vocab_size \u00d7 n_embd) that maps the final hidden state back to logits over the vocabulary. It is distinct from wte \u2014 the model learns separate representations for "what this token means" (wte) and "how likely is this token next" (lm_head).
 
 With defaults (n_embd=16, vocab=28, block_size=8, n_layer=1, n_head=4):
 - wte: 28\u00d716 = 448 params
 - wpe: 8\u00d716 = 128 params
+- lm_head: 28\u00d716 = 448 params
 - Per layer: 4 attention matrices (16\u00d716 each = 1,024) + 2 MLP matrices (64\u00d716 + 16\u00d764 = 2,048)
-- Total: ~3,648 params. GPT-2-XL has 1.5B. GPT-4 has ~1.8T.`,
+- Total: ~4,096 params. GPT-2-XL has 1.5B. GPT-4 has ~1.8T.`,
     source: `matrix = lambda nout, nin, std=0.02: \\
     [[Value(random.gauss(0, std)) for _ in range(nin)]
      for _ in range(nout)]
@@ -210,6 +211,7 @@ With defaults (n_embd=16, vocab=28, block_size=8, n_layer=1, n_head=4):
 state_dict = {
     'wte': matrix(vocab_size, n_embd),
     'wpe': matrix(block_size, n_embd),
+    'lm_head': matrix(vocab_size, n_embd),
 }
 for i in range(n_layer):
     state_dict[f'layer{i}.attn_wq'] = matrix(n_embd, n_embd)
@@ -237,7 +239,7 @@ SOFTMAX: Turns any list of numbers into percentages that add up to 100%. Big num
 RMSNORM: A volume knob that keeps numbers from getting too loud or too quiet. Without it, the math breaks after a few steps.`,
     technical: `LINEAR (matrix multiply): The core operation. Takes a vector x (a list of numbers) and multiplies it by a weight matrix W. Each output number is a weighted combination of ALL inputs. This is how the model applies its learned knowledge \u2014 the weights in W encode what combinations of inputs are meaningful.
 
-SOFTMAX: Converts raw scores ("logits") into probabilities. Steps: (1) subtract the max for stability, (2) exponentiate each value (makes everything positive), (3) divide by the sum (makes everything sum to 1). Input [-2, 1, 3] \u2192 Output [0.01, 0.04, 0.95]. The model uses this every time it needs to make a choice.
+SOFTMAX: Converts raw scores ("logits") into probabilities. Steps: (1) subtract the max for stability, (2) exponentiate each value (makes everything positive), (3) divide by the sum (makes everything sum to 1). Input [-2, 1, 3] \u2192 Output [0.01, 0.12, 0.88]. The model uses this every time it needs to make a choice.
 
 RMSNORM: Computes root-mean-square of the vector, then divides each element by it. Keeps activations stable as data flows through layers. Without normalization, values would either explode toward infinity or collapse toward zero after several matrix multiplications.`,
     deep: `linear() is a pure matrix-vector multiply implemented as nested loops: output[o] = \u03a3 W[o][i] \u00d7 x[i]. In production frameworks this dispatches to BLAS/cuBLAS and runs in microseconds on GPU. Here it\u2019s O(n\u00b2) scalar Python operations \u2014 correct but ~10\u2076\u00d7 slower.
@@ -377,12 +379,12 @@ Embed: Look up the token\u2019s 16-number vector from wte, and the position\u201
 
 Transform: For each layer, run attention (gather cross-position info) then MLP (process within-position info), with residual connections around each.
 
-Unembed: Project the final 16-number vector back to vocabulary size (28 numbers) using the SAME matrix as the token embeddings (weight tying). This is elegant \u2014 the same matrix that translates tokens\u2192embeddings also translates embeddings\u2192token predictions.
+Unembed: Project the final 16-number vector back to vocabulary size (28 numbers) using a separate output matrix (lm_head). This learned matrix translates the model\u2019s internal representation into a score for each possible next token.
 
 The result is 28 "logits" \u2014 raw scores. High score = model thinks that token is likely to come next. These get passed through softmax to become actual probabilities.`,
     deep: `The gpt() function signature reveals the KV cache design: keys and values are external lists-of-lists passed by reference. Each call appends to them, building up context across sequential calls. This is functionally identical to how inference engines like vLLM manage KV state.
 
-Weight tying (sharing wte for embed and unembed) creates an interesting geometric constraint: the dot product between a token\u2019s embedding and the output hidden state determines that token\u2019s logit. This means the model\u2019s internal representation of "the next token should be \u2018a\u2019" must be geometrically close (high dot product) to the embedding of \u2018a\u2019 itself.
+The output projection uses a separate lm_head matrix (not shared with wte). This gives the model independent capacity for "understanding tokens" (wte) versus "predicting tokens" (lm_head), at the cost of extra parameters.
 
 The function is purely functional with side effects only on the mutable KV cache \u2014 clean separation of model logic from training logic.`,
     source: `def gpt(token_id, pos_id, keys, values):
@@ -405,7 +407,7 @@ The function is purely functional with side effects only on the mutable KV cache
         x = linear(x, state_dict[f'layer{li}.mlp_fc2'])
         x = [a + b for a, b in zip(x, x_residual)]
 
-    logits = linear(x, state_dict['wte'])  # weight tying
+    logits = linear(x, state_dict['lm_head'])
     return logits`,
   },
   {
@@ -443,7 +445,7 @@ After enough practice, the model gets good at guessing what letters follow other
 6. Learning rate decays linearly to zero over training, so early steps make bold adjustments and later steps fine-tune.`,
     deep: `The training loop processes one document per step (batch size 1, no gradient accumulation). Each document is tokenized with BOS/EOS, cropped to block_size, and fed through the transformer sequentially.
 
-The loss is mean cross-entropy over positions: L = (1/T) \u03a3 -log P(x_{t+1} | x_{\u2264t}). The backward() call on each per-position loss accumulates gradients \u2014 equivalent to computing total loss and calling backward once, but without holding the entire computation graph simultaneously.
+The loss is mean cross-entropy over positions: L = (1/T) \u03a3 -log P(x_{t+1} | x_{\u2264t}). Per-position losses are collected into a list, then averaged into a single scalar loss. One backward() call on this total loss backpropagates through the entire computation graph, computing gradients for every parameter in one pass.
 
 Adam optimizer (Kingma & Ba, 2014) with \u03b21=0.9, \u03b22=0.95, \u03b5=1e-8. Bias correction applied. Linear LR warmdown: lr_t = lr \u00d7 (1 - step/num_steps). No weight decay, no gradient clipping \u2014 acceptable at this scale but would cause instability in larger models.`,
     source: `# Adam optimizer setup
@@ -459,14 +461,14 @@ for step in range(args.num_steps):
 
     keys = [[] for _ in range(n_layer)]
     values = [[] for _ in range(n_layer)]
-    lossf = 0.0
+    losses = []
     for pos_id in range(len(tokens) - 1):
         logits = gpt(tokens[pos_id], pos_id, keys, values)
         probs = softmax(logits)
-        loss = -probs[tokens[pos_id + 1]].log()
-        loss = (1 / (len(tokens) - 1)) * loss
-        loss.backward()
-        lossf += loss.data
+        loss_t = -probs[tokens[pos_id + 1]].log()
+        losses.append(loss_t)
+    loss = (1 / len(losses)) * sum(losses)
+    loss.backward()
 
     lr_t = learning_rate * (1 - step / args.num_steps)
     for i, p in enumerate(params):
@@ -501,15 +503,16 @@ The result: a brand-new name that sounds real but was never in the training data
 4. If sampled token is EOS, stop. Otherwise, convert ID back to character and continue.
 5. The KV cache carries over \u2014 each new token benefits from all past context without recomputing it.
 
-The sampling strategy here is pure multinomial (sample proportional to probabilities). Production LLMs add temperature (scale randomness), top-k (only consider k most likely), and top-p (only consider tokens until cumulative probability hits p).`,
-    deep: `Inference loop: initialize empty KV cache, seed with BOS, autoregressive decode for up to block_size tokens. Sampling is unmodified multinomial via random.choices \u2014 no temperature, no top-k/p truncation.
+Temperature=0.5 is applied: logits are divided by 0.5 before softmax, which doubles them and makes the distribution sharper (more confident). A temperature below 1 reduces randomness; above 1 increases it. Production LLMs additionally use top-k (only consider k most likely) and top-p (only consider tokens until cumulative probability hits p).`,
+    deep: `Inference loop: initialize empty KV cache, seed with BOS, autoregressive decode for up to block_size tokens. Sampling uses temperature=0.5 \u2014 logits are divided by temperature before softmax, sharpening the distribution. No top-k/p truncation.
 
 Each generated token feeds back as the next input with incremented pos_id. The KV cache grows by one entry per layer per step. This is the standard autoregressive decode loop \u2014 the only difference from production is speed (~1 tok/s CPU vs ~100 tok/s GPU).
 
 After 1000 steps on names, typical outputs are 3-6 character strings exhibiting learned phonotactic patterns (consonant-vowel alternations, typical endings like -ly, -an, -ia) without reproducing training examples verbatim.
 
 This completes the LLM lifecycle: data \u2192 tokenize \u2192 train \u2192 generate. Every commercial LLM follows this exact pipeline, differing only in scale.`,
-    source: `print("\\n--- generation ---")
+    source: `temperature = 0.5
+print("\\n--- generation ---")
 for sample_idx in range(5):
     keys = [[] for _ in range(n_layer)]
     values = [[] for _ in range(n_layer)]
@@ -517,7 +520,7 @@ for sample_idx in range(5):
     generated = []
     for pos_id in range(block_size):
         logits = gpt(token_id, pos_id, keys, values)
-        probs = softmax(logits)
+        probs = softmax([l / temperature for l in logits])
         token_id = random.choices(
             range(vocab_size),
             weights=[p.data for p in probs])[0]
@@ -531,9 +534,9 @@ for sample_idx in range(5):
     title: "From Micro to Macro",
     image: "/image11.webp",
     analogy: `Sam\u2019s lemonade stand has 3 drinks, serves 10 customers/day, and uses a pocket notebook. McDonald\u2019s has 100+ menu items, serves 70 million customers/day, and uses a global supply chain with AI forecasting. But the LOGIC is the same: observe patterns, predict demand, adjust based on mistakes. A bigger notebook, more data to learn from, and more practice time \u2014 that\u2019s what separates a stand from an empire. The recipe never changed.`,
-    simple: `**The algorithm in this 140-line file is the same one running inside GPT-4. The difference is only scale.**
+    simple: `**The algorithm in this 243-line file is the same one running inside GPT-4. The difference is only scale.**
 
-This tiny model learns names with 5,000 numbers. GPT-4 uses 1,800,000,000,000 numbers (1.8 trillion). But the steps are IDENTICAL:
+This tiny model learns names with 5,000 numbers. GPT-4 uses an estimated 1,800,000,000,000 numbers (~1.8 trillion). But the steps are IDENTICAL:
 - Turn text into numbers
 - Predict next token
 - Measure how wrong you were
@@ -544,7 +547,7 @@ Making the model bigger doesn\u2019t change what it does \u2014 it changes how W
 
 Size: 5K params \u2192 GPT-2 1.5B \u2192 GPT-3 175B \u2192 GPT-4 ~1.8T
 Layers: 1 \u2192 48 \u2192 96 \u2192 ~120
-Context: 8 tokens \u2192 1024 \u2192 4096 \u2192 128K
+Context: 8 tokens \u2192 1024 \u2192 2048 \u2192 128K
 Tokenizer: 28 characters \u2192 50K BPE tokens \u2192 100K+ tokens
 Data: 32K names \u2192 40GB web text \u2192 trillions of tokens
 
@@ -557,7 +560,7 @@ What changes at scale: distributed parallelism (data/tensor/pipeline), ZeRO, mix
 
 What stays identical: autoregressive next-token prediction, transformer (attention + MLP with residuals), softmax attention with QKV projections, cross-entropy loss, gradient-based optimization.
 
-This file proves: the core algorithm fits in 140 lines. Everything else is engineering.`,
+This file proves: the core algorithm fits in ~243 lines. Everything else is engineering.`,
     source: `# microgpt defaults:
 #   n_embd=16, n_layer=1, n_head=4, block_size=8
 #   ~5,000 parameters
